@@ -5,38 +5,39 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.eica.categorymanager.model.Category
 import com.eica.categorymanager.model.Product
+import org.jetbrains.anko.db.*
 
-class DataManager(var context: Context) {
-    private val db: SQLiteDatabase = context.openOrCreateDatabase("ProductManager", Context.MODE_PRIVATE, null);
+class DataManager private constructor(ctx: Context): ManagedSQLiteOpenHelper(ctx, "categorymanagerdb", null, 3) {
     init {
-        val categoryCreateQuery = "CREATE TABLE IF NOT EXISTS `Category` (`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL)"
-        val productCategoryQuery = "CREATE TABLE IF NOT EXISTS `Product` (`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL, `price` INTEGER NOT NULL, `categoryId` INTEGER NOT NULL)"
-        db.execSQL(categoryCreateQuery)
-        db.execSQL(productCategoryQuery)
+        instance = this
+    }
+    companion object {
+        private var instance: DataManager? = null
+
+        @Synchronized
+        fun getInstance(ctx: Context) = instance ?: DataManager(ctx.applicationContext)
     }
 
-    fun add(category: Category) {
-        val query = "INSERT INTO Category (name) VALUES ('${category.name}')"
-        db.execSQL(query)
+    override fun onCreate(db: SQLiteDatabase?) {
+        db?.createTable("Products",
+        true,
+                "id" to INTEGER  + PRIMARY_KEY + AUTOINCREMENT ,
+        "name" to TEXT,
+                    "price" to INTEGER,
+        "categoryId" to INTEGER)
+
+        db?.createTable("Category",
+        true,
+        "id" to INTEGER + PRIMARY_KEY  + AUTOINCREMENT ,
+        "name" to TEXT)
     }
 
-    fun add(product: Product) {
-        val query = "INSERT INTO Product (name, price, categoryId) VALUES ('${product.name}', '${product.price}', '${product.category.id}')"
-        db.execSQL(query)
-    }
-
-    fun allCategories() : List<Category> {
-        val categories = mutableListOf<Category>()
-        val cursor = db.rawQuery("SELECT * FROM Category", null)
-        if (cursor.moveToFirst()) {
-            do {
-                val id = cursor.getInt(cursor.getColumnIndex("id"))
-                val name = cursor.getString(cursor.getColumnIndex("name"))
-
-                categories.add(Category(id, name))
-            } while (cursor.moveToNext())
-        }
-        cursor.close()
-        return categories
+    override fun onUpgrade(db: SQLiteDatabase?, p1: Int, p2: Int) {
+        db?.dropTable("Products")
+        db?.dropTable("Category")
     }
 }
+
+// Access property for Context
+val Context.database: DataManager
+    get() = DataManager.getInstance(this)

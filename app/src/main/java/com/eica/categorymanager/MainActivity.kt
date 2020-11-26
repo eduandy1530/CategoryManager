@@ -12,12 +12,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        var addProductButton = findViewById<FloatingActionButton>(R.id.addProductButton)
-        addProductButton.setOnClickListener {
-
-        }
-//        dataManager = DataManager(this)
-
 
     }
 }

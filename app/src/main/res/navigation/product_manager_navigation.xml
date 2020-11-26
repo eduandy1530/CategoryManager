@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_addProductFragment_to_productListFragment"
             app:destination="@id/productListFragment" />
+        <action
+            android:id="@+id/action_addProductFragment_to_addCategoryFragment"
+            app:destination="@id/addCategoryFragment" />
     </fragment>
     <fragment
         android:id="@+id/productListFragment"
@@ -21,6 +24,15 @@
         tools:layout="@layout/fragment_product_list" >
         <action
             android:id="@+id/action_productListFragment_to_addProductFragment"
+            app:destination="@id/addProductFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addCategoryFragment"
+        android:name="com.eica.categorymanager.AddCategoryFragment"
+        android:label="fragment_add_category"
+        tools:layout="@layout/fragment_add_product" >
+        <action
+            android:id="@+id/action_addCategoryFragment_to_addProductFragment"
             app:destination="@id/addProductFragment" />
     </fragment>
 </navigation>
