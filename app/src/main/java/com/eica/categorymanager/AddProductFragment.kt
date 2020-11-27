@@ -57,7 +57,7 @@ class AddProductFragment : Fragment() {
         if(!param1.isNullOrEmpty()){
             isEdit = true
 
-            btnGuardar.setText("Update")
+           // btnGuardar.setText("Update")
             val product = Gson().fromJson<Product>(param1, Product::class.java)
             productId = product.id!!
             editTextProductName.setText(product.name)
